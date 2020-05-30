@@ -1,0 +1,34 @@
+#bin/bash
+if [[ $1 == "-h" ]]; then
+	echo "Exemple\n apng fichier1.png fichier2.png [ouputname]"
+	exit
+fi
+if [[ ! -e $1 || ! -e $2 ]]; then
+	echo fichier mauvais fichier
+	exit
+#elif [[ extentioin ]]; then
+#	#statements
+fi
+maxX=$(identify -format "%w" $1)
+maxY=$(identify -format "%h" $1)
+
+if [[ $maxX < $(identify -format "%w" $2) ]]; then
+	maxX=$(identify -format "%w" $2)
+fi
+if [[ $maxY < $(identify -format "%h" $2) ]]; then
+	maxY=$(identify -format "%h" $2)
+fi
+convert $1 -resize "$maxX"x"$maxY" -gravity center -background white -extent "$maxX"x"$maxY" tmp-$1
+convert $2 -resize "$maxX"x"$maxY" -gravity center -background white -extent "$maxX"x"$maxY" tmp-$2
+echo "redimentionment bienpasser"
+echo file \'tmp-$1\' > listFichier
+echo file \'tmp-$2\' >> listFichier
+if [[ $3 ]]; then
+	nomsFichierSortie=$3.apng
+else
+	nomsFichierSortie="sortie.apng"
+fi
+ffmpeg -v 0 -f concat -i listFichier $nomsFichierSortie 
+rm listFichier  tmp-$1  tmp-$2
+echo fichier $nomsFichierSortie crées !
+mv $nomsFichierSortie $(echo $nomsFichierSortie|sed 's/.apng/.png/g')
