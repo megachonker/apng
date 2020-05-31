@@ -18,17 +18,17 @@ fi
 if [[ $maxY > $(identify -format "%h" $2) ]]; then
 	maxY=$(identify -format "%h" $2)
 fi
-convert $1 -resize "$maxX"x"$maxY" -gravity center -background transparent -extent "$maxX"x"$maxY" tmp-$1
-convert $2 -resize "$maxX"x"$maxY" -gravity center -background transparent -extent "$maxX"x"$maxY" tmp-$2
+convert $1 -resize "$maxX"x"$maxY" -gravity center -background none -extent "$maxX"x"$maxY" tmp1.png
+convert $2 -resize "$maxX"x"$maxY" -gravity center -background none -extent "$maxX"x"$maxY" tmp2.png
 echo "redimentionment bienpasser"
-echo file \'tmp-$1\' > listFichier
-echo file \'tmp-$2\' >> listFichier
+echo file \'tmp1.png\' > listFichier
+echo file \'tmp2.png\' >> listFichier
 if [[ $3 ]]; then
 	nomsFichierSortie=$3.apng
 else
 	nomsFichierSortie="sortie.apng"
 fi
 ffmpeg -v 0 -f concat -i listFichier $nomsFichierSortie 
-rm listFichier  tmp-$1  tmp-$2
-mv $nomsFichierSortie $(echo $nomsFichierSortie|sed 's/.apng/.png/g')
+rm listFichier  tmp1.png  tmp2.png
 echo fichier $(echo $nomsFichierSortie|sed 's/.apng/.png/g') crées !
+mv $nomsFichierSortie $(echo $nomsFichierSortie|sed 's/.apng/.png/g')
