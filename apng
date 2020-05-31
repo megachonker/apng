@@ -12,14 +12,14 @@ fi
 maxX=$(identify -format "%w" $1)
 maxY=$(identify -format "%h" $1)
 
-if [[ $maxX < $(identify -format "%w" $2) ]]; then
+if [[ $maxX > $(identify -format "%w" $2) ]]; then
 	maxX=$(identify -format "%w" $2)
 fi
-if [[ $maxY < $(identify -format "%h" $2) ]]; then
+if [[ $maxY > $(identify -format "%h" $2) ]]; then
 	maxY=$(identify -format "%h" $2)
 fi
-convert $1 -resize "$maxX"x"$maxY" -gravity center -background white -extent "$maxX"x"$maxY" tmp-$1
-convert $2 -resize "$maxX"x"$maxY" -gravity center -background white -extent "$maxX"x"$maxY" tmp-$2
+convert $1 -resize "$maxX"x"$maxY" -gravity center -background transparent -extent "$maxX"x"$maxY" tmp-$1
+convert $2 -resize "$maxX"x"$maxY" -gravity center -background transparent -extent "$maxX"x"$maxY" tmp-$2
 echo "redimentionment bienpasser"
 echo file \'tmp-$1\' > listFichier
 echo file \'tmp-$2\' >> listFichier
@@ -30,5 +30,5 @@ else
 fi
 ffmpeg -v 0 -f concat -i listFichier $nomsFichierSortie 
 rm listFichier  tmp-$1  tmp-$2
-echo fichier $nomsFichierSortie crées !
 mv $nomsFichierSortie $(echo $nomsFichierSortie|sed 's/.apng/.png/g')
+echo fichier $(echo $nomsFichierSortie|sed 's/.apng/.png/g') crées !
